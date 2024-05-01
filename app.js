@@ -8,37 +8,39 @@ const { Op } = require("sequelize");
 const app = express();
 const PORT = 3051;
 
-// Парсинг тела запроса в формате JSON
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use(cors());
 
 // Маршрут для авторизации пользователя
 app.post('/login', async (req, res) => {
-  const { emailOrUsername, password } = req.body;
+    console.log('Запрос на авторизацию');
+    const { emailOrUsername, password } = req.body;
 
-  try {
-    // Поиск пользователя по электронной почте и паролю
-    const user = await models.User.findOne({
-        where: {
-            [Op.or]: [
-                { email: emailOrUsername },
-                { username: emailOrUsername }
-            ],
-            password: password
+    try {
+        // Поиск пользователя по электронной почте и паролю
+        const user = await models.User.findOne({
+            where: {
+                [Op.or]: [
+                    { email: emailOrUsername },
+                    { username: emailOrUsername }
+                ],
+                password: password
+            }
+        });
+
+        // Если пользователь найден, возвращаем успешный ответ (дополнительная проверка для учёта регистра пароля)
+        if (user) {
+            if (user.password === password) {
+                res.status(200).json({ message: 'Успешная авторизация' });
+            } 
+        }else {
+            res.status(401).json({ message: 'Неверные email (логин) или пароль'});
         }
-    });
-
-    // Если пользователь найден, возвращаем успешный ответ
-    if (user) {
-        res.status(200).json({ message: 'Login successful' });
-    } else {
-        res.status(401).json({ message: 'Invalid email or password' });
+    } catch (error) {
+        console.error('Ошибка при авторизации:', error);
+        res.status(500).json({ message: 'Ошибка на стороне сервера'});
     }
-  } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 });
 
 // Запуск сервера

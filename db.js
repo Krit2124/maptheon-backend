@@ -1,6 +1,6 @@
 const {Sequelize} = require("sequelize")
 
-const sequelize = new Sequelize("maptheon", "root", "", {host: "localhost", dialect: "mysql"})
+const sequelize = new Sequelize("maptheonDB", "root", "", {host: "localhost", dialect: "mysql"})
 
 try {
     sequelize.authenticate();

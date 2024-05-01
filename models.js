@@ -26,10 +26,6 @@ const FavouriteMap = sequelize.define("favourite_map", {
   id_map: {
     type: Sequelize.INTEGER,
     allowNull: false
-  },
-  added_at: {
-    type: Sequelize.DATE,
-    allowNull: false
   }
 });
 
@@ -63,14 +59,6 @@ const GroupOfObject = sequelize.define("group_of_object", {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: false
-  },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false
-  },
   is_public: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
@@ -95,14 +83,6 @@ const Map = sequelize.define("map", {
   description: {
     type: Sequelize.TEXT,
     allowNull: true
-  },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: false
-  },
-  updated_at: {
-    type: Sequelize.DATE,
-    allowNull: false
   },
   number_in_favourites: {
     type: Sequelize.INTEGER,
@@ -140,10 +120,6 @@ const MapBanList = sequelize.define("map_ban_list", {
   },
   reason: {
     type: Sequelize.TEXT,
-    allowNull: false
-  },
-  banned_at: {
-    type: Sequelize.DATE,
     allowNull: false
   }
 });
@@ -244,10 +220,6 @@ const User = sequelize.define("user", {
     type: Sequelize.TEXT,
     allowNull: false
   },
-  created_at: {
-    type: Sequelize.DATE,
-    allowNull: false
-  },
   id_access_type: {
     type: Sequelize.INTEGER,
     allowNull: false
@@ -274,10 +246,6 @@ const UserBanList = sequelize.define("user_ban_list", {
   },
   reason: {
     type: Sequelize.TEXT,
-    allowNull: false
-  },
-  banned_at: {
-    type: Sequelize.DATE,
     allowNull: false
   },
   banned_until: {
