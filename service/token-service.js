@@ -27,7 +27,11 @@ class TokenService {
     }
 
     async saveToken(id_user, refreshToken) {
-        const existingToken = await Token.findOne({ id_user });
+        const existingToken = await Token.findOne({ 
+            where: {
+                id_user: id_user,
+            } 
+        });
         if (existingToken) {
             existingToken.refreshToken = refreshToken;
             return existingToken.save();
