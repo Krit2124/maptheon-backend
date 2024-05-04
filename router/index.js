@@ -1,5 +1,5 @@
 const Router = require('express').Router;
-// const {body} = require('express-validator');
+const {body} = require('express-validator');
 
 const userController = require('../controllers/user-controller');
 // const authMiddleware = require('../middlewares/auth-middleware');
@@ -7,8 +7,8 @@ const userController = require('../controllers/user-controller');
 const router = new Router();
 
 router.post('/registration',
-    // body('email').isEmail(),
-    // body('password').isLength({min: 3, max: 32}),
+    body('email').isEmail(),
+    body('password').isLength({min: 6, max: 63}),
     userController.registration
 );
 router.post('/login', userController.login);
