@@ -33,7 +33,7 @@ class TokenService {
             } 
         });
         if (existingToken) {
-            existingToken.refreshToken = refreshToken;
+            existingToken.refresh_token = refreshToken;
             return existingToken.save();
         }
         const newToken = await Token.create({ id_user, refresh_token: refreshToken });

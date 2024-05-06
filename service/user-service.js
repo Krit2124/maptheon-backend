@@ -29,7 +29,7 @@ class UserService {
         });
 
         const userDto = new UserDto(user);
-        const tokens = TokenService.generateTokens({...UserDto});
+        const tokens = TokenService.generateTokens({...userDto});
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto}
@@ -54,7 +54,8 @@ class UserService {
         }
 
         const userDto = new UserDto(user);
-        const tokens = TokenService.generateTokens({...UserDto});
+        const tokens = TokenService.generateTokens({...userDto});
+        console.log('tokens: ', tokens);
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto}
@@ -72,14 +73,17 @@ class UserService {
 
         const userData = tokenService.validateRefreshToken(refreshToken);
         const tokenFromDB = await TokenService.findToken(refreshToken);
+        console.log('tokenFromDB: ', tokenFromDB);
+        console.log('userData: ', userData);
         if (!userData || !tokenFromDB) {
             throw ApiError.UnauthorizedError();
         }
 
         const user = await User.findByPk(userData.id);
+        console.log('user: ', user);
         const userDto = new UserDto(user);
         
-        const tokens = TokenService.generateTokens({...UserDto});
+        const tokens = TokenService.generateTokens({...userDto});
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto}
