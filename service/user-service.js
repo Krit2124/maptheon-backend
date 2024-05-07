@@ -7,7 +7,7 @@ const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error');
 const tokenService = require('./token-service');
 
-class UserService {
+module.exports = new class UserService {
     async registration(username, email, password) {
         const userWithSameEmail = await User.findOne({ where: { email } });
         if (userWithSameEmail) {
@@ -73,14 +73,11 @@ class UserService {
 
         const userData = tokenService.validateRefreshToken(refreshToken);
         const tokenFromDB = await TokenService.findToken(refreshToken);
-        console.log('tokenFromDB: ', tokenFromDB);
-        console.log('userData: ', userData);
         if (!userData || !tokenFromDB) {
             throw ApiError.UnauthorizedError();
         }
 
         const user = await User.findByPk(userData.id);
-        console.log('user: ', user);
         const userDto = new UserDto(user);
         
         const tokens = TokenService.generateTokens({...userDto});
@@ -89,5 +86,3 @@ class UserService {
         return {...tokens, user: userDto}
     }
 }
-
-module.exports = new UserService();
