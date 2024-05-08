@@ -18,4 +18,6 @@ router.get('/refresh', userController.refresh);
 
 router.get('/myMaps/:id', authMiddleware, mapController.getMapsFromCurrentUser);
 
+router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
+
 module.exports = router
