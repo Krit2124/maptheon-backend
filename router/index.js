@@ -7,6 +7,7 @@ const authMiddleware = require('../middlewares/auth-middleware');
 
 const router = new Router();
 
+// Взаимодействие с данными пользователей
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min: 6, max: 63}),
@@ -16,8 +17,9 @@ router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
 
+// Взаимодействие с данными карт
 router.get('/myMaps/:id', authMiddleware, mapController.getMapsFromCurrentUser);
-
 router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
+router.post('/saveMapData', authMiddleware, mapController.saveMapData);
 
 module.exports = router

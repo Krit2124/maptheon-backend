@@ -16,7 +16,7 @@ module.exports = new class MapController {
 
     async getMapData(req, res, next) {
         try {
-            // Получение id пользователя и карты
+            // Получение id пользователя и карты из запроса
             const authorizationHeader = req.headers.authorization;
             const accessToken = authorizationHeader.split(' ')[1];
             const decodedToken = jwt.decode(accessToken);
@@ -26,6 +26,22 @@ module.exports = new class MapController {
             // Получение и возврат данных карты
             const mapData = await MapService.getMapData(id_map, id_user);
             return res.send(mapData);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async saveMapData(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const authorizationHeader = req.headers.authorization;
+            const accessToken = authorizationHeader.split(' ')[1];
+            const decodedToken = jwt.decode(accessToken);
+            const id_user = decodedToken.id;
+            const { id_map, data } = req.body;
+
+            const message = await MapService.saveMapData(id_map, id_user, data);
+            return res.json(message);
         } catch (e) {
             next(e);
         }

@@ -16,9 +16,13 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
+    "fabric": "^5.3.0",
+    "fabric-all-modules": "^5.3.0",
+    "file-system": "^2.2.2",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.7",
     "sequelize": "^6.37.3",
+    "sharp": "^0.33.3",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
