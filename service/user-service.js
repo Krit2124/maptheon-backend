@@ -71,6 +71,8 @@ module.exports = new class UserService {
             throw ApiError.UnauthorizedError();
         }
 
+        console.log('refresh: ', refreshToken);
+
         const userData = tokenService.validateRefreshToken(refreshToken);
         const tokenFromDB = await TokenService.findToken(refreshToken);
         if (!userData || !tokenFromDB) {

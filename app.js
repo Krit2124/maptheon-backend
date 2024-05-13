@@ -10,7 +10,8 @@ const errorMiddleware = require('./middlewares/error-middleware');
 const app = express();
 const PORT = process.env.PORT || 5050;
 
-app.use(express.json());
+app.use(express.json({limit: '500mb'}));
+app.use(express.urlencoded({limit: '500mb'}));
 app.use(express.static('public'))
 app.use(cookieParser());
 app.use(cors({

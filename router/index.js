@@ -18,7 +18,7 @@ router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
 
 // Взаимодействие с данными карт
-router.get('/myMaps/:id', authMiddleware, mapController.getMapsFromCurrentUser);
+router.post('/myMaps', authMiddleware, mapController.getMapsFromCurrentUser);
 router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
 router.post('/saveMapData', authMiddleware, mapController.saveMapData);
 
