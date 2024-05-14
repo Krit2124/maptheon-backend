@@ -1,20 +1,11 @@
-const jwt = require('jsonwebtoken');
-
 const MapService = require('../service/map-service');
-const ApiError = require('../exceptions/api-error');
-
-function getUserIdFromRequest(req) {
-    const authorizationHeader = req.headers.authorization;
-    const accessToken = authorizationHeader.split(' ')[1];
-    const decodedToken = jwt.decode(accessToken);
-    return decodedToken.id;
-}
+const UserService = require('../service/user-service');
 
 module.exports = new class MapController {
     async getMapsFromCurrentUser(req, res, next) {
         try {
             // Получение id пользователя и фильтров из запроса
-            const id_user = getUserIdFromRequest(req);
+            const id_user = UserService.getUserIdFromRequest(req);
             const { textToFind, sortByField } = req.body;
 
             const maps = await MapService.getMapsFromCurrentUser(id_user, textToFind, sortByField);
@@ -24,10 +15,24 @@ module.exports = new class MapController {
         }
     }
 
+    async getMapSettings(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
+            const id_map = req.params.id;
+
+            // Получение и возврат настроек и изображения карты
+            const mapData = await MapService.getMapSettings(id_map, id_user);
+            return res.send(mapData);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     async getMapData(req, res, next) {
         try {
             // Получение id пользователя и карты из запроса
-            const id_user = getUserIdFromRequest(req);
+            const id_user = UserService.getUserIdFromRequest(req);
             const id_map = req.params.id;
 
             // Получение и возврат данных карты
@@ -41,7 +46,7 @@ module.exports = new class MapController {
     async saveMapData(req, res, next) {
         try {
             // Получение id пользователя и карты из запроса
-            const id_user = getUserIdFromRequest(req);
+            const id_user = UserService.getUserIdFromRequest(req);
             const { id_map, data, mapImage } = req.body;
 
             const message = await MapService.saveMapData(id_map, id_user, data, mapImage);

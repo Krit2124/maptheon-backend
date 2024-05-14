@@ -3,6 +3,7 @@ const {body} = require('express-validator');
 
 const userController = require('../controllers/user-controller');
 const mapController = require('../controllers/map-controller');
+const tagController = require('../controllers/tag-controller');
 const authMiddleware = require('../middlewares/auth-middleware');
 
 const router = new Router();
@@ -19,7 +20,13 @@ router.get('/refresh', userController.refresh);
 
 // Взаимодействие с данными карт
 router.post('/myMaps', authMiddleware, mapController.getMapsFromCurrentUser);
+router.get('/myMapSettings/:id', authMiddleware, mapController.getMapSettings);
 router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
 router.post('/saveMapData', authMiddleware, mapController.saveMapData);
+
+// Взаимодействие с тегами
+router.get('/tagsForMap/:id', authMiddleware, tagController.getTagsByMap);
+router.post('/bindTagToMap', authMiddleware, tagController.bindTagToMap);
+router.post('/deleteTag', authMiddleware, tagController.deleteBindTagToMap);
 
 module.exports = router

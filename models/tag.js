@@ -9,7 +9,7 @@ const Tag = sequelize.define("tag", {
     autoIncrement: true
   },
   name: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     allowNull: false
   },
   id_creator: {
@@ -23,4 +23,4 @@ Tag.belongsTo(User, {
   targetKey: 'id'
 });
 
-module.exports = {Tag};
+module.exports = Tag;

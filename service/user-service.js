@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { Op } = require("sequelize");
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 const TokenService = require('./token-service');
@@ -86,5 +87,12 @@ module.exports = new class UserService {
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto}
+    }
+
+    getUserIdFromRequest(req) {
+        const authorizationHeader = req.headers.authorization;
+        const accessToken = authorizationHeader.split(' ')[1];
+        const decodedToken = jwt.decode(accessToken);
+        return decodedToken.id;
     }
 }
