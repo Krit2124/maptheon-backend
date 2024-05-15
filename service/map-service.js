@@ -57,14 +57,16 @@ module.exports = new class MapService {
         });
 
         const imagePath = `http://localhost:` + process.env.PORT + `/img/mapsFullSize/${id_map}.jpg`;
-        return [
-            map.id, 
-            map.name,
-            map.description,
-            map.number_in_favourites,
-            map.is_public,
-            imagePath
-        ];
+        return {
+            id: map.id, 
+            name:map.name,
+            description: map.description,
+            number_in_favourites: map.number_in_favourites,
+            is_public: map.is_public,
+            createdAt: map.createdAt,
+            updatedAt: map.updatedAt,
+            image: imagePath,
+        };
     }
 
     async getMapData(id_map, id_user) {
