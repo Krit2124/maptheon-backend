@@ -21,6 +21,9 @@ router.get('/refresh', userController.refresh);
 // Взаимодействие с данными карт
 router.post('/myMaps', authMiddleware, mapController.getMapsFromCurrentUser);
 router.get('/myMapSettings/:id', authMiddleware, mapController.getMapSettings);
+router.post('/updateMapName', authMiddleware, mapController.updateMapName);
+router.post('/updateMapDescription', authMiddleware, mapController.updateMapDescription);
+router.post('/updateMapPublicStatus', authMiddleware, mapController.updateMapPublicStatus);
 router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
 router.post('/saveMapData', authMiddleware, mapController.saveMapData);
 

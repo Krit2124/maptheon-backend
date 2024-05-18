@@ -69,6 +69,60 @@ module.exports = new class MapService {
         };
     }
 
+    // Метод для обновления названия карты
+    async updateMapName(id_map, id_user, newName) {
+        const map = await Map.findOne({
+            where: {
+                id: id_map,
+                id_creator: id_user
+            }
+        });
+
+        if (!map) {
+            throw new ApiError('Отказано в доступе к карте или карта не найдена', 403);
+        }
+
+        map.name = newName;
+        await map.save();
+        return 'Данные успешно сохранены';
+    }
+
+    // Метод для обновления описания карты
+    async updateMapDescription(id_map, id_user, newDescription) {
+        const map = await Map.findOne({
+            where: {
+                id: id_map,
+                id_creator: id_user
+            }
+        });
+
+        if (!map) {
+            throw new ApiError('Отказано в доступе к карте или карта не найдена', 403);
+        }
+
+        map.description = newDescription;
+        await map.save();
+        return 'Данные успешно сохранены';
+    }
+
+    // Метод для обновления публичности карты
+    async updateMapPublicStatus(id_map, id_user, newPublicStatus) {
+        const map = await Map.findOne({
+            where: {
+                id: id_map,
+                id_creator: id_user
+            }
+        });
+
+        if (!map) {
+            throw new ApiError('Отказано в доступе к карте или карта не найдена', 403);
+        }
+
+        map.is_public = newPublicStatus;
+        await map.save();
+        return 'Данные успешно сохранены';
+    }
+
     async getMapData(id_map, id_user) {
         const map = await Map.findOne({
             where: {

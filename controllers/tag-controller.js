@@ -4,7 +4,7 @@ const UserService = require('../service/user-service');
 module.exports = new class TagController {
     async getTagsByMap(req, res, next) {
         try {
-            const { id_map } = req.params.id_map;
+            const id_map = req.params.id;
             const tags = await TagService.getAllTagsByMap(id_map);
             res.json(tags);
         } catch (e) {
@@ -18,7 +18,7 @@ module.exports = new class TagController {
             const id_user = UserService.getUserIdFromRequest(req);
             const { tag_name, id_map } = req.body;
 
-            let tag = await TagService.getTagByName(tag_name);
+            let tag = await TagService.findTagByName(tag_name);
 
             if (!tag) {
                 tag = await TagService.addTag(tag_name, id_user);
