@@ -2,6 +2,17 @@ const MapService = require('../service/map-service');
 const UserService = require('../service/user-service');
 
 module.exports = new class MapController {
+    async getAllMaps(req, res, next) {
+        try {
+            const { textToFind, sortByField } = req.body;
+
+            const maps = await MapService.getAllMaps(textToFind, sortByField);
+            return res.json(maps);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     async getMapsFromCurrentUser(req, res, next) {
         try {
             // Получение id пользователя и фильтров из запроса
@@ -86,6 +97,19 @@ module.exports = new class MapController {
             const { id_map, data, mapImage } = req.body;
 
             const message = await MapService.saveMapData(id_map, id_user, data, mapImage);
+            return res.json(message);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async deleteMap(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
+            const { id_map } = req.body;
+
+            const message = await MapService.deleteMap(id_user, id_map,);
             return res.json(message);
         } catch (e) {
             next(e);

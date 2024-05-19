@@ -19,6 +19,7 @@ router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
 
 // Взаимодействие с данными карт
+router.post('/allMaps', authMiddleware, mapController.getAllMaps);
 router.post('/myMaps', authMiddleware, mapController.getMapsFromCurrentUser);
 router.get('/myMapSettings/:id', authMiddleware, mapController.getMapSettings);
 router.post('/updateMapName', authMiddleware, mapController.updateMapName);
@@ -26,6 +27,7 @@ router.post('/updateMapDescription', authMiddleware, mapController.updateMapDesc
 router.post('/updateMapPublicStatus', authMiddleware, mapController.updateMapPublicStatus);
 router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
 router.post('/saveMapData', authMiddleware, mapController.saveMapData);
+router.post('/deleteMap', authMiddleware, mapController.deleteMap);
 
 // Взаимодействие с тегами
 router.get('/tagsForMap/:id', authMiddleware, tagController.getTagsByMap);

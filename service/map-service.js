@@ -5,19 +5,54 @@ const { Op } = require('sequelize');
 const sharp = require('sharp');
 const Buffer = require('buffer').Buffer;
 
-function mapsWithImageFromCurrentUser(map, imagePath) {
+const TagService = require('./tag-service');
+const User = require('../models/user');
+
+function mapsFromCurrentUser(map) {
     return {
         id: map.id,
         name: map.name,
         updatedAt: map.updatedAt,
-        imagePath: imagePath
+    };
+}
+
+function mapsFromAllUsers(map) {
+    return {
+        id: map.id,
+        name: map.name,
+        id_creator: map.id_creator,
+        creator_name: map.user.username,
+        number_in_favourites: map.number_in_favourites,
     };
 }
 
 module.exports = new class MapService {
-    async getAllMaps() {
-        const maps = await Map.find();
-        return maps;
+    async getAllMaps(textToFind, sortByField) {
+        const maps = await Map.findAll({ 
+            where: {
+                name: {
+                    [Op.like]: `%${textToFind}%`
+                }
+            },
+            include: [{
+                model: User,
+                as: 'user',
+                attributes: ['username']
+            }],
+            order: [
+                [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
+            ]
+        });
+
+        const mapsToReturn = [];
+    
+        // Проходимся по каждой карте и добавляем объект с нужными данными карты в массив
+        for (const map of maps) {
+            // Создаем объект карты и добавляем его в массив
+            mapsToReturn.push(mapsFromAllUsers(map));
+        }
+    
+        return mapsToReturn;
     }
 
     async getMapsFromCurrentUser(id_user, textToFind, sortByField) {
@@ -33,19 +68,15 @@ module.exports = new class MapService {
             ]
         });
     
-        // Массив для хранения карт с изображениями
-        const mapsWithImages = [];
+        const mapsToReturn = [];
     
-        // Проходимся по каждой карте и добавляем объект карты с изображением в массив
+        // Проходимся по каждой карте и добавляем объект с нужными данными карты в массив
         for (const map of maps) {
-            // Формируем путь к изображению
-            const imagePath = `http://localhost:` + process.env.PORT + `/img/mapsPreviews/${map.id}.jpg`;
-            // Создаем объект карты с изображением и добавляем его в массив
-            mapsWithImages.push(mapsWithImageFromCurrentUser(map, imagePath));
+            // Создаем объект карты и добавляем его в массив
+            mapsToReturn.push(mapsFromCurrentUser(map));
         }
     
-        // Возвращаем массив объектов карт с изображениями
-        return mapsWithImages;
+        return mapsToReturn;
     }
 
     async getMapSettings(id_map, id_user) {
@@ -56,7 +87,6 @@ module.exports = new class MapService {
             }
         });
 
-        const imagePath = `http://localhost:` + process.env.PORT + `/img/mapsFullSize/${id_map}.jpg`;
         return {
             id: map.id, 
             name:map.name,
@@ -65,7 +95,6 @@ module.exports = new class MapService {
             is_public: map.is_public,
             createdAt: map.createdAt,
             updatedAt: map.updatedAt,
-            image: imagePath,
         };
     }
 
@@ -184,5 +213,24 @@ module.exports = new class MapService {
         await sharp(fullPath).resize(350, 215).toFile(previewPath);
         
         return 'Данные успешно сохранены';
+    }
+
+    async deleteMap(id_user, id_map) {
+        // Проверка, принадлежит ли карта пользователю
+        const map = await Map.findOne({
+            where: {
+                id: id_map,
+                id_creator: id_user
+            }
+        });
+
+        if (!map) {
+            throw new ApiError('Отказано в доступе к карте или карта не найдена', 403);
+        }
+
+        await TagService.deleteAllBindTagToMap(map);
+        await map.destroy();
+
+        return 'Данные успешно удалены';
     }
 }

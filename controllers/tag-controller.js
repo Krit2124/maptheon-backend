@@ -35,9 +35,10 @@ module.exports = new class TagController {
     async deleteBindTagToMap(req, res, next) {
         try {
             // Получение id тега и id карты из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
             const { id_map, id_tag } = req.body;
 
-            await TagService.deleteBindTagToMap(id_map, id_tag);
+            await TagService.deleteBindTagToMap(id_user, id_map, id_tag);
 
             return res.json('Данные успешно удалены');
         } catch (e) {
