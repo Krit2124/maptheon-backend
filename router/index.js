@@ -17,10 +17,12 @@ router.post('/registration',
 router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 router.get('/refresh', userController.refresh);
+router.get('/profileInfo/:id', authMiddleware, userController.getUserProfileInfo);
 
 // Взаимодействие с данными карт
 router.post('/allMaps', authMiddleware, mapController.getAllMaps);
-router.post('/myMaps', authMiddleware, mapController.getMapsFromCurrentUser);
+router.post('/myMaps', authMiddleware, mapController.getMyMaps);
+router.post('/userMaps', authMiddleware, mapController.getMapsFromUser);
 router.get('/myMapSettings/:id', authMiddleware, mapController.getMapSettings);
 router.post('/updateMapName', authMiddleware, mapController.updateMapName);
 router.post('/updateMapDescription', authMiddleware, mapController.updateMapDescription);

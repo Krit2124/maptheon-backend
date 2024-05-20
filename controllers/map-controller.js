@@ -13,13 +13,25 @@ module.exports = new class MapController {
         }
     }
 
-    async getMapsFromCurrentUser(req, res, next) {
+    async getMyMaps(req, res, next) {
         try {
             // Получение id пользователя и фильтров из запроса
             const id_user = UserService.getUserIdFromRequest(req);
             const { textToFind, sortByField } = req.body;
 
-            const maps = await MapService.getMapsFromCurrentUser(id_user, textToFind, sortByField);
+            const maps = await MapService.getMyMaps(id_user, textToFind, sortByField);
+            return res.json(maps);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getMapsFromUser(req, res, next) {
+        try {
+            // Получение id пользователя и фильтров из запроса
+            const { id_user, textToFind, sortByField } = req.body;
+            
+            const maps = await MapService.getMapsFromUser(id_user, textToFind, sortByField);
             return res.json(maps);
         } catch (e) {
             next(e);

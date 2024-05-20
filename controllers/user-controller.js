@@ -50,6 +50,16 @@ class UserController {
             next(e);
         }
     }
+
+    async getUserProfileInfo(req, res, next) {
+        try {
+            const id_user = req.params.id;
+            const userInfo = await UserService.getUserProfileInfo(id_user);
+            return res.json(userInfo);
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 module.exports = new UserController();

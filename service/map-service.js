@@ -8,11 +8,19 @@ const Buffer = require('buffer').Buffer;
 const TagService = require('./tag-service');
 const User = require('../models/user');
 
-function mapsFromCurrentUser(map) {
+function mapsFromMe(map) {
     return {
         id: map.id,
         name: map.name,
         updatedAt: map.updatedAt,
+    };
+}
+
+function mapsFromCurrentUser(map) {
+    return {
+        id: map.id,
+        name: map.name,
+        number_in_favourites: map.number_in_favourites,
     };
 }
 
@@ -55,7 +63,31 @@ module.exports = new class MapService {
         return mapsToReturn;
     }
 
-    async getMapsFromCurrentUser(id_user, textToFind, sortByField) {
+    async getMyMaps(id_user, textToFind, sortByField) {
+        const maps = await Map.findAll({ 
+            where: {
+                id_creator: id_user,
+                name: {
+                    [Op.like]: `%${textToFind}%`
+                }
+            },
+            order: [
+                [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
+            ]
+        });
+    
+        const mapsToReturn = [];
+    
+        // Проходимся по каждой карте и добавляем объект с нужными данными карты в массив
+        for (const map of maps) {
+            // Создаем объект карты и добавляем его в массив
+            mapsToReturn.push(mapsFromMe(map));
+        }
+    
+        return mapsToReturn;
+    }
+
+    async getMapsFromUser(id_user, textToFind, sortByField) {
         const maps = await Map.findAll({ 
             where: {
                 id_creator: id_user,

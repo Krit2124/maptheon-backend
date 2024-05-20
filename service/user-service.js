@@ -95,4 +95,14 @@ module.exports = new class UserService {
         const decodedToken = jwt.decode(accessToken);
         return decodedToken.id;
     }
+
+    async getUserProfileInfo(id_user) {
+        const user = await User.findByPk(id_user);
+
+        return {
+            id: user.id,
+            username: user.username,
+            description: user.description,
+        }
+    }
 }
