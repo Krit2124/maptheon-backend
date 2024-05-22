@@ -130,6 +130,30 @@ module.exports = new class MapService {
         };
     }
 
+    async getUserMapInfo(id_map, id_user) {
+        const map = await Map.findOne({
+            where: {
+                id: id_map,
+                id_creator: id_user
+            },
+            include: [{
+                model: User,
+                as: 'user',
+                attributes: ['username']
+            }],
+        });
+
+        return {
+            id: map.id, 
+            name: map.name,
+            creator_name: map.user.username,
+            description: map.description,
+            number_in_favourites: map.number_in_favourites,
+            createdAt: map.createdAt,
+            updatedAt: map.updatedAt,
+        };
+    }
+
     // Метод для обновления названия карты
     async updateMapName(id_map, id_user, newName) {
         const map = await Map.findOne({

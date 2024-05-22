@@ -46,7 +46,20 @@ module.exports = new class MapController {
 
             // Получение и возврат настроек и изображения карты
             const mapData = await MapService.getMapSettings(id_map, id_user);
-            return res.send(mapData);
+            return res.json(mapData);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getUserMapInfo(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const { id_map, id_user } = req.body;
+
+            // Получение и возврат настроек карты
+            const mapData = await MapService.getUserMapInfo(id_map, id_user);
+            return res.json(mapData);
         } catch (e) {
             next(e);
         }

@@ -24,6 +24,7 @@ router.post('/allMaps', authMiddleware, mapController.getAllMaps);
 router.post('/myMaps', authMiddleware, mapController.getMyMaps);
 router.post('/userMaps', authMiddleware, mapController.getMapsFromUser);
 router.get('/myMapSettings/:id', authMiddleware, mapController.getMapSettings);
+router.post('/userMapInfo', authMiddleware, mapController.getUserMapInfo);
 router.post('/updateMapName', authMiddleware, mapController.updateMapName);
 router.post('/updateMapDescription', authMiddleware, mapController.updateMapDescription);
 router.post('/updateMapPublicStatus', authMiddleware, mapController.updateMapPublicStatus);
