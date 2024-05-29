@@ -8,9 +8,11 @@ const AccessType = sequelize.define("access_type", {
       autoIncrement: true
     },
     type: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(31),
       allowNull: false
     }
+}, {
+  timeStamps: false,
 });
 
 module.exports = AccessType;

@@ -12,6 +12,8 @@ const Object = sequelize.define("object", {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  timeStamps: false,
 });
 
 Object.belongsTo(GroupOfObject, {

@@ -17,6 +17,8 @@ const GroupHasTag = sequelize.define("group_has_tag", {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  timeStamps: false,
 });
 
 GroupHasTag.belongsTo(Tag, {

@@ -40,7 +40,8 @@ module.exports = new class MapService {
             where: {
                 name: {
                     [Op.like]: `%${textToFind}%`
-                }
+                },
+                is_public: true,
             },
             include: [{
                 model: User,
@@ -93,7 +94,8 @@ module.exports = new class MapService {
                 id_creator: id_user,
                 name: {
                     [Op.like]: `%${textToFind}%`
-                }
+                },
+                is_public: true,
             },
             order: [
                 [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
@@ -265,7 +267,7 @@ module.exports = new class MapService {
         // Путь для сохранения превью изображения
         const previewPath = path.join(__dirname, '../public/img/mapsPreviews', `${id_map}.jpg`);
     
-        // Создание превью изображения с помощью Sharp
+        // Создание превью изображения
         await sharp(fullPath).resize(350, 215).toFile(previewPath);
         
         return 'Данные успешно сохранены';

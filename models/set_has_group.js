@@ -17,6 +17,8 @@ const SetHasGroup = sequelize.define("set_has_group", {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  timeStamps: false,
 });
 
 SetHasGroup.belongsTo(GroupOfObject, {

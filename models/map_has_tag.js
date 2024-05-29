@@ -17,6 +17,8 @@ const MapHasTag = sequelize.define("map_has_tag", {
     type: Sequelize.INTEGER,
     allowNull: false
   }
+}, {
+  timeStamps: false,
 });
 
 MapHasTag.belongsTo(Tag, {

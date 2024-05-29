@@ -33,6 +33,11 @@ const Map = sequelize.define("map", {
     allowNull: false,
     defaultValue: false
   },
+  is_allowed_to_clone: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   is_banned: {
     type: Sequelize.BOOLEAN,
     allowNull: false,

@@ -15,7 +15,9 @@ const Tag = sequelize.define("tag", {
   id_creator: {
     type: Sequelize.INTEGER,
     allowNull: true
-  }
+  },
+}, {
+  timeStamps: false,
 });
 
 Tag.belongsTo(User, {
