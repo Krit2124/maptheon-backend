@@ -269,8 +269,8 @@ module.exports = new class MapService {
     
         // Создание превью изображения
         await sharp(fullPath).resize(350, 215).toFile(previewPath);
-        
-        return 'Данные успешно сохранены';
+
+        return map.id;
     }
 
     async deleteMap(id_user, id_map) {

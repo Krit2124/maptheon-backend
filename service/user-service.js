@@ -33,7 +33,7 @@ module.exports = new class UserService {
         const tokens = TokenService.generateTokens({...userDto});
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
-        return {...tokens, user: userDto}
+        return {...tokens, user: userDto};
     }
 
     async login(emailOrUsername, password) {
@@ -56,7 +56,6 @@ module.exports = new class UserService {
 
         const userDto = new UserDto(user);
         const tokens = TokenService.generateTokens({...userDto});
-        console.log('tokens: ', tokens);
         await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
         return {...tokens, user: userDto}
@@ -71,8 +70,6 @@ module.exports = new class UserService {
         if (!refreshToken) {
             throw ApiError.UnauthorizedError();
         }
-
-        console.log('refresh: ', refreshToken);
 
         const userData = tokenService.validateRefreshToken(refreshToken);
         const tokenFromDB = await TokenService.findToken(refreshToken);

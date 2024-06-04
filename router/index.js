@@ -10,8 +10,7 @@ const router = new Router();
 
 // Взаимодействие с данными пользователей
 router.post('/registration',
-    body('email').isEmail(),
-    body('password').isLength({min: 6, max: 63}),
+    body('email').isEmail().withMessage('Неверный формат email'),
     userController.registration
 );
 router.post('/login', userController.login);
@@ -37,4 +36,4 @@ router.get('/tagsForMap/:id', authMiddleware, tagController.getTagsByMap);
 router.post('/bindTagToMap', authMiddleware, tagController.bindTagToMap);
 router.post('/deleteTag', authMiddleware, tagController.deleteBindTagToMap);
 
-module.exports = router
+module.exports = router;

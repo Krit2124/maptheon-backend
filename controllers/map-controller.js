@@ -121,8 +121,8 @@ module.exports = new class MapController {
             const id_user = UserService.getUserIdFromRequest(req);
             const { id_map, data, mapImage } = req.body;
 
-            const message = await MapService.saveMapData(id_map, id_user, data, mapImage);
-            return res.json(message);
+            const savedMapId = await MapService.saveMapData(id_map, id_user, data, mapImage);
+            return res.send(savedMapId);
         } catch (e) {
             next(e);
         }
