@@ -25,7 +25,7 @@ const Map = sequelize.define("map", {
     allowNull: false
   },
   data: {
-    type: Sequelize.JSON,
+    type: Sequelize.TEXT,
     allowNull: false
   },
   is_public: {
