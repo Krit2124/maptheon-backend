@@ -1,5 +1,6 @@
 const Tag = require('../models/tag');
 const MapHasTag = require('../models/map_has_tag');
+const Map = require('../models/map');
 
 module.exports = new class TagService {
     async findTagByName(tag_name) {
