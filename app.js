@@ -15,10 +15,7 @@ app.use(express.urlencoded({limit: '500mb'}));
 app.use(express.static('public'))
 app.use(cookieParser());
 app.use(cors({
-    origin: process.env.CLIENT_URL,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use('/api', router);
 app.use(errorMiddleware);
