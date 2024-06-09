@@ -18,7 +18,7 @@ app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL
 }));
-app.use(router);
+app.use('/api', router);
 app.use(errorMiddleware);
 
 // Запуск сервера
