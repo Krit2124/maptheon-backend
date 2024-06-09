@@ -286,8 +286,34 @@ module.exports = new class MapService {
             throw new ApiError('Отказано в доступе к карте или карта не найдена', 403);
         }
 
+        // Удаление всех привязанных тегов
         await TagService.deleteAllBindTagToMap(map);
+
+        // Удаление карты из базы данных
         await map.destroy();
+
+        // Пути к изображениям
+        const previewImagePath = path.join(__dirname, '../public/img/mapsPreviews', `${id_map}.jpg`);
+        const fullSizeImagePath = path.join(__dirname, '../public/img/mapsFullSize', `${id_map}.jpg`);
+
+        // Удаление изображений
+        try {
+            await fs.unlink(previewImagePath);
+        } catch (err) {
+            // Игнорируем ошибку, если файл не найден
+            if (err.code !== 'ENOENT') {
+                console.error(`Ошибка при удалении файла ${previewImagePath}:`, err);
+            }
+        }
+
+        try {
+            await fs.unlink(fullSizeImagePath);
+        } catch (err) {
+            // Игнорируем ошибку, если файл не найден
+            if (err.code !== 'ENOENT') {
+                console.error(`Ошибка при удалении файла ${fullSizeImagePath}:`, err);
+            }
+        }
 
         return 'Данные успешно удалены';
     }
