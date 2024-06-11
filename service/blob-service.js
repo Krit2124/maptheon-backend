@@ -1,9 +1,4 @@
-const { Blob } = require('@vercel/blob');
-
-const blob = new Blob({
-  url: process.env.VERCEL_BLOB_URL,
-  token: process.env.VERCEL_BLOB_TOKEN,
-});
+const { blob } = require('@vercel/blob');
 
 module.exports = new class BlobService {
     async uploadImage(path, bufferImage) {
