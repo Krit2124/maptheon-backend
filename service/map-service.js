@@ -7,6 +7,7 @@ const Buffer = require('buffer').Buffer;
 
 const TagService = require('./tag-service');
 const User = require('../models/user');
+const BlobService = require('./blob-service');
 
 function mapsFromMe(map) {
     return {
@@ -259,16 +260,19 @@ module.exports = new class MapService {
         var bufferImage = Buffer.from(mapImageData, 'base64');
             
         // Путь для сохранения полного изображения
-        const fullPath = path.join(__dirname, '../public/img/mapsFullSize', `${id_map}.jpg`);
+        const fullPath = `mapsFullSize/${id_map}.jpg`;
     
         // Сохранение полного изображения
-        fs.writeFileSync(fullPath, bufferImage);
+        await BlobService.uploadImage(fullPath, bufferImage);
     
         // Путь для сохранения превью изображения
-        const previewPath = path.join(__dirname, '../public/img/mapsPreviews', `${id_map}.jpg`);
+        const previewPath = `mapsPreviews/${id_map}.jpg`;
     
         // Создание превью изображения
-        await sharp(fullPath).resize(350, 215).toFile(previewPath);
+        const previewBuffer = await sharp(bufferImage).resize(350, 215).toBuffer();
+
+        // Сохранение превью изображения
+        await BlobService.uploadImage(previewPath, previewBuffer);
 
         return map.id;
     }
