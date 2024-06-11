@@ -274,7 +274,7 @@ module.exports = new class MapService {
         // Сохранение превью изображения
         await BlobService.uploadImage(previewPath, previewBuffer);
 
-        return map.id;
+        return id_map;
     }
 
     async deleteMap(id_user, id_map) {
