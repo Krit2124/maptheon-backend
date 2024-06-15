@@ -122,7 +122,7 @@ module.exports = new class MapController {
             const { id_map, data, mapImage } = req.body;
 
             const savedMapId = await MapService.saveMapData(id_map, id_user, data, mapImage);
-            return res.send(savedMapId);
+            return res.json(savedMapId);
         } catch (e) {
             next(e);
         }
