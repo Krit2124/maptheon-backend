@@ -31,6 +31,11 @@ router.get('/myMapData/:id', authMiddleware, mapController.getMapData);
 router.post('/saveMapData', authMiddleware, mapController.saveMapData);
 router.post('/deleteMap', authMiddleware, mapController.deleteMap);
 
+// Взаимодействие с избранными картами
+router.post('/allFavouriteMaps', authMiddleware, mapController.getAllFavouriteMaps);
+router.post('/addMapToFavourite', authMiddleware, mapController.addMapToFavourite);
+router.post('/deleteMapFromFavourite', authMiddleware, mapController.deleteMapFromFavourite);
+
 // Взаимодействие с тегами
 router.get('/tagsForMap/:id', authMiddleware, tagController.getTagsByMap);
 router.post('/bindTagToMap', authMiddleware, tagController.bindTagToMap);

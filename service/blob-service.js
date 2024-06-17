@@ -13,10 +13,4 @@ module.exports = new class BlobService {
 
         return result;
     };
-    
-    // async getImageURL(id_map) {
-    //     // Получаем URL изображения
-    //     const url = getURL(`mapsFullSize/${id_map}.jpg`);
-    //     return url;
-    // };
 }

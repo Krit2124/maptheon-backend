@@ -1,4 +1,3 @@
-const Map = require('../models/map');
 const fs = require('fs');
 const path = require('path');
 const { Op } = require('sequelize');
@@ -6,9 +5,13 @@ const sharp = require('sharp');
 const Buffer = require('buffer').Buffer;
 
 const TagService = require('./tag-service');
-const User = require('../models/user');
 const BlobService = require('./blob-service');
 
+const Map = require('../models/map');
+const User = require('../models/user');
+const FavouriteMap  = require('../models/favourite_map');
+
+// Функция для оформления данных карт текущего пользователя
 function mapsFromMe(map) {
     return {
         id: map.id,
@@ -17,26 +20,31 @@ function mapsFromMe(map) {
     };
 }
 
-function mapsFromCurrentUser(map) {
+// Функция для оформления данных карт выбранного пользователя
+function mapsFromCurrentUser(map, wasFavourite) {
     return {
         id: map.id,
         name: map.name,
         number_in_favourites: map.number_in_favourites,
+        wasFavourite: wasFavourite,
     };
 }
 
-function mapsFromAllUsers(map) {
+// Функция для оформления данных карт всех пользователей
+function mapsFromAllUsers(map, wasFavourite) {
     return {
         id: map.id,
         name: map.name,
         id_creator: map.id_creator,
         creator_name: map.user.username,
         number_in_favourites: map.number_in_favourites,
+        wasFavourite: wasFavourite,
     };
 }
 
 module.exports = new class MapService {
-    async getAllMaps(textToFind, sortByField) {
+    // Получение данных всех карт
+    async getAllMaps(id_user, textToFind, sortByField) {
         const maps = await Map.findAll({ 
             where: {
                 name: {
@@ -50,7 +58,7 @@ module.exports = new class MapService {
                 attributes: ['username']
             }],
             order: [
-                [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
+                [sortByField, sortByField === 'name' ? 'ASC' : 'DESC'],
             ]
         });
 
@@ -58,13 +66,24 @@ module.exports = new class MapService {
     
         // Проходимся по каждой карте и добавляем объект с нужными данными карты в массив
         for (const map of maps) {
+            let bind = await FavouriteMap.findOne({
+                where: {
+                    id_user: id_user,
+                    id_map: map.id,
+                }
+            });
+
+            let wasFavourite = bind ? true : false;
+
+
             // Создаем объект карты и добавляем его в массив
-            mapsToReturn.push(mapsFromAllUsers(map));
+            mapsToReturn.push(mapsFromAllUsers(map, wasFavourite));
         }
     
         return mapsToReturn;
     }
 
+    // Получение данных всех карт текущего пользователя
     async getMyMaps(id_user, textToFind, sortByField) {
         const maps = await Map.findAll({ 
             where: {
@@ -74,7 +93,7 @@ module.exports = new class MapService {
                 }
             },
             order: [
-                [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
+                [sortByField, sortByField === 'name' ? 'ASC' : 'DESC'],
             ]
         });
     
@@ -89,7 +108,8 @@ module.exports = new class MapService {
         return mapsToReturn;
     }
 
-    async getMapsFromUser(id_user, textToFind, sortByField) {
+    // Получение данных всех карт выбранного пользователя
+    async getMapsFromUser(id_current_user, id_user, textToFind, sortByField) {
         const maps = await Map.findAll({ 
             where: {
                 id_creator: id_user,
@@ -99,7 +119,7 @@ module.exports = new class MapService {
                 is_public: true,
             },
             order: [
-                [sortByField, sortByField === 'name' || sortByField === 'number_in_favourites' ? 'ASC' : 'DESC'],
+                [sortByField, sortByField === 'name' ? 'ASC' : 'DESC'],
             ]
         });
     
@@ -107,13 +127,23 @@ module.exports = new class MapService {
     
         // Проходимся по каждой карте и добавляем объект с нужными данными карты в массив
         for (const map of maps) {
+            let bind = await FavouriteMap.findOne({
+                where: {
+                    id_user: id_current_user,
+                    id_map: map.id,
+                }
+            });
+
+            let wasFavourite = bind ? true : false;
+
             // Создаем объект карты и добавляем его в массив
-            mapsToReturn.push(mapsFromCurrentUser(map));
+            mapsToReturn.push(mapsFromCurrentUser(map, wasFavourite));
         }
     
         return mapsToReturn;
     }
 
+    // Получение параметров карты текущего пользователя
     async getMapSettings(id_map, id_user) {
         const map = await Map.findOne({
             where: {
@@ -133,7 +163,8 @@ module.exports = new class MapService {
         };
     }
 
-    async getUserMapInfo(id_map, id_user) {
+    // Получение параметров карты выбранного пользователя
+    async getUserMapInfo(id_current_user, id_map, id_user) {
         const map = await Map.findOne({
             where: {
                 id: id_map,
@@ -146,12 +177,20 @@ module.exports = new class MapService {
             }],
         });
 
+        let bind = await FavouriteMap.findOne({
+            where: {
+                id_user: id_current_user,
+                id_map: map.id,
+            }
+        });
+
         return {
             id: map.id, 
             name: map.name,
             creator_name: map.user.username,
             description: map.description,
             number_in_favourites: map.number_in_favourites,
+            wasFavourite: bind ? true : false,
             createdAt: map.createdAt,
             updatedAt: map.updatedAt,
         };
@@ -211,6 +250,7 @@ module.exports = new class MapService {
         return 'Данные успешно сохранены';
     }
 
+    // Получение данных содержимого карты
     async getMapData(id_map, id_user) {
         const map = await Map.findOne({
             where: {
@@ -225,6 +265,7 @@ module.exports = new class MapService {
         return map.data;
     }
 
+    // Сохранение содержимого карты
     async saveMapData(id_map, id_user, data, mapImage) {
         const map = await Map.findOne({
             where: {
@@ -277,6 +318,7 @@ module.exports = new class MapService {
         return id_map;
     }
 
+    // Удаление карты
     async deleteMap(id_user, id_map) {
         // Проверка, принадлежит ли карта пользователю
         const map = await Map.findOne({
@@ -320,5 +362,79 @@ module.exports = new class MapService {
         }
 
         return 'Данные успешно удалены';
+    }
+
+    // Получение избранных карт
+    async getAllFavouriteMaps(id_user, textToFind, sortByField) {
+        // Получение списка избранных карт
+        const binds = await FavouriteMap.findAll({
+            where: {
+                id_user: id_user
+            }
+        });
+
+        const mapsToReturn = [];
+
+        // Получение данных избранных карт
+        for (const bind of binds) {
+            const map = await Map.findOne({
+                where: {
+                    id: bind.id_map,
+                    is_public: true,
+                    name: {
+                        [Op.like]: `%${textToFind}%`
+                    },
+                },
+                include: [{
+                    model: User,
+                    as: 'user',
+                    attributes: ['username']
+                }],
+                order: [
+                    [sortByField, sortByField === 'name' ? 'ASC' : 'DESC'],
+                ]
+           });
+
+            // Создаем объект карты и добавляем его в массив
+            if (map) {
+                mapsToReturn.push(mapsFromAllUsers(map, true));
+            }
+        }
+    
+        return mapsToReturn;
+    }
+
+    // Добавление карты в избранное
+    async addMapToFavourite(id_user, id_map) {
+        let newBind = await FavouriteMap.create({
+            id_user: id_user,
+            id_map: id_map,
+        });
+
+        const map = await Map.findByPk(id_map);
+
+        map.number_in_favourites += 1;
+        await map.save();
+
+        return map.number_in_favourites;
+    }
+
+    // Удаление карты из избранного
+    async deleteMapFromFavourite(id_user, id_map)  {
+        const bind = await FavouriteMap.findOne({
+            where: {
+                id_user: id_user,
+                id_map: id_map,
+            }
+        });
+
+        bind.destroy();
+
+        const map = await Map.findByPk(id_map);
+
+        map.number_in_favourites -= 1;
+        await map.save();
+
+        return map.number_in_favourites;
     }
 }

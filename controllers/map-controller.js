@@ -4,9 +4,11 @@ const UserService = require('../service/user-service');
 module.exports = new class MapController {
     async getAllMaps(req, res, next) {
         try {
+            // Получение id пользователя и фильтров из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
             const { textToFind, sortByField } = req.body;
 
-            const maps = await MapService.getAllMaps(textToFind, sortByField);
+            const maps = await MapService.getAllMaps(id_user, textToFind, sortByField);
             return res.json(maps);
         } catch (e) {
             next(e);
@@ -29,9 +31,10 @@ module.exports = new class MapController {
     async getMapsFromUser(req, res, next) {
         try {
             // Получение id пользователя и фильтров из запроса
+            const id_current_user = UserService.getUserIdFromRequest(req);
             const { id_user, textToFind, sortByField } = req.body;
             
-            const maps = await MapService.getMapsFromUser(id_user, textToFind, sortByField);
+            const maps = await MapService.getMapsFromUser(id_current_user, id_user, textToFind, sortByField);
             return res.json(maps);
         } catch (e) {
             next(e);
@@ -55,10 +58,11 @@ module.exports = new class MapController {
     async getUserMapInfo(req, res, next) {
         try {
             // Получение id пользователя и карты из запроса
+            const id_current_user = UserService.getUserIdFromRequest(req);
             const { id_map, id_user } = req.body;
 
             // Получение и возврат настроек карты
-            const mapData = await MapService.getUserMapInfo(id_map, id_user);
+            const mapData = await MapService.getUserMapInfo(id_current_user, id_map, id_user);
             return res.json(mapData);
         } catch (e) {
             next(e);
@@ -134,8 +138,47 @@ module.exports = new class MapController {
             const id_user = UserService.getUserIdFromRequest(req);
             const { id_map } = req.body;
 
-            const message = await MapService.deleteMap(id_user, id_map,);
+            const message = await MapService.deleteMap(id_user, id_map);
             return res.json(message);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getAllFavouriteMaps(req, res, next) {
+        try {
+            // Получение id пользователя и фильтров из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
+            const { textToFind, sortByField } = req.body;
+
+            const maps = await MapService.getAllFavouriteMaps(id_user, textToFind, sortByField);
+            return res.json(maps);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async addMapToFavourite(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
+            const { id_map } = req.body;
+
+            const likes = await MapService.addMapToFavourite(id_user, id_map);
+            return res.json(likes);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async deleteMapFromFavourite(req, res, next) {
+        try {
+            // Получение id пользователя и карты из запроса
+            const id_user = UserService.getUserIdFromRequest(req);
+            const { id_map } = req.body;
+
+            const likes = await MapService.deleteMapFromFavourite(id_user, id_map);
+            return res.json(likes);
         } catch (e) {
             next(e);
         }
